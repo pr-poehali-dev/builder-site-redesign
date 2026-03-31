@@ -5,6 +5,10 @@ const HERO_IMG = "https://cdn.poehali.dev/files/b7ed642f-1932-4780-9fa9-f52e1c11
 const INTERIOR_IMG = "https://cdn.poehali.dev/projects/12f928bd-d79e-49a3-9402-01ab190a849b/files/4601bbf2-a1a2-4e49-b943-039fd5ef0728.jpg";
 const AERIAL_IMG = "https://cdn.poehali.dev/projects/12f928bd-d79e-49a3-9402-01ab190a849b/files/8a6b2614-9830-42d9-93f6-98ab77a979fc.jpg";
 
+const DARK = "#1a2535";
+const GOLD = "#9a7d3a";
+const CREAM = "#f5f2ec";
+
 const NAV_ITEMS = [
   { id: "home", label: "Главная" },
   { id: "about", label: "О компании" },
@@ -29,30 +33,12 @@ const FINISH_OPTIONS = [
 ];
 
 const APARTMENTS = [
-  {
-    rooms: "1-комнатная",
-    area: "35–45 м²",
-    price: "от 2 100 000 ₽",
-    features: ["Раздельный санузел", "Балкон 4 м²", "Чистовая отделка"],
-    popular: false,
-  },
-  {
-    rooms: "2-комнатная",
-    area: "55–65 м²",
-    price: "от 3 200 000 ₽",
-    features: ["Совмещённый санузел", "Лоджия 6 м²", "Вид во двор"],
-    popular: true,
-  },
-  {
-    rooms: "3-комнатная",
-    area: "75–85 м²",
-    price: "от 4 800 000 ₽",
-    features: ["Два санузла", "Просторная кухня-гостиная", "Вид на парк"],
-    popular: false,
-  },
+  { rooms: "1-комнатная", area: "35–45 м²", price: "от 2 100 000 ₽", features: ["Раздельный санузел", "Балкон 4 м²", "Чистовая отделка"], popular: false },
+  { rooms: "2-комнатная", area: "55–65 м²", price: "от 3 200 000 ₽", features: ["Совмещённый санузел", "Лоджия 6 м²", "Вид во двор"], popular: true },
+  { rooms: "3-комнатная", area: "75–85 м²", price: "от 4 800 000 ₽", features: ["Два санузла", "Просторная кухня-гостиная", "Вид на парк"], popular: false },
 ];
 
-function useIntersection(ref: React.RefObject<Element>, threshold = 0.15) {
+function useIntersection(ref: React.RefObject<Element>, threshold = 0.12) {
   const [visible, setVisible] = useState(false);
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -65,12 +51,22 @@ function useIntersection(ref: React.RefObject<Element>, threshold = 0.15) {
   return visible;
 }
 
-function AnimatedSection({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+function Reveal({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const visible = useIntersection(ref);
   return (
-    <div ref={ref} className={`transition-all duration-700 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"} ${className}`}>
+    <div ref={ref} className={`transition-all duration-700 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"} ${className}`}>
       {children}
+    </div>
+  );
+}
+
+function Divider() {
+  return (
+    <div className="flex items-center gap-3 my-6">
+      <div className="h-px flex-1" style={{ background: GOLD, opacity: 0.3 }} />
+      <div className="w-1.5 h-1.5 rotate-45" style={{ background: GOLD }} />
+      <div className="h-px flex-1" style={{ background: GOLD, opacity: 0.3 }} />
     </div>
   );
 }
@@ -109,51 +105,51 @@ export default function Index() {
   };
 
   return (
-    <div className="font-body bg-background text-foreground min-h-screen">
+    <div className="font-body min-h-screen" style={{ background: CREAM, color: DARK }}>
 
       {/* NAVIGATION */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/98 backdrop-blur-sm shadow-sm">
-        <div className="max-w-7xl mx-auto px-6 h-[70px] flex items-center justify-between">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b-2" style={{ borderColor: GOLD }}>
+        <div className="max-w-7xl mx-auto px-6 h-[68px] flex items-center justify-between">
           <button onClick={() => scrollTo("home")} className="flex items-center gap-3">
-            <div className="w-[50px] h-[50px] bg-brand text-white rounded-lg flex items-center justify-center text-xl font-extrabold">СЗ</div>
-            <div className="hidden sm:block text-left">
-              <div className="font-bold text-base text-foreground leading-tight">ООО «СЗ ЦСК»</div>
-              <div className="text-foreground/50 text-xs">Специализированный застройщик</div>
+            <div className="w-10 h-10 flex items-center justify-center text-white text-base font-bold" style={{ background: DARK }}>
+              СЗ
+            </div>
+            <div className="hidden sm:block text-left leading-tight">
+              <div className="font-bold text-sm tracking-wide" style={{ color: DARK }}>ООО «СЗ ЦСК»</div>
+              <div className="text-xs tracking-wider" style={{ color: GOLD }}>Специализированный застройщик</div>
             </div>
           </button>
-          <nav className="hidden md:flex items-center gap-7">
+
+          <nav className="hidden md:flex items-center gap-8">
             {NAV_ITEMS.map(item => (
-              <button
-                key={item.id}
-                onClick={() => scrollTo(item.id)}
-                className={`text-sm font-semibold transition-colors duration-200 ${
-                  activeSection === item.id ? "text-brand" : "text-foreground hover:text-brand"
-                }`}
-              >
+              <button key={item.id} onClick={() => scrollTo(item.id)}
+                className="text-sm font-bold tracking-wider uppercase transition-colors duration-200"
+                style={{ color: activeSection === item.id ? GOLD : DARK, borderBottom: activeSection === item.id ? `2px solid ${GOLD}` : "2px solid transparent", paddingBottom: "2px" }}>
                 {item.label}
               </button>
             ))}
-            <a
-              href="tel:+79901217046"
-              className="flex items-center gap-2 bg-brand text-white px-5 py-2.5 rounded-full text-sm font-bold hover:bg-brand-dark transition-colors"
-            >
+            <a href="tel:+79901217046"
+              className="flex items-center gap-2 px-5 py-2.5 text-sm font-bold tracking-wider text-white transition-opacity hover:opacity-90"
+              style={{ background: DARK }}>
               <Icon name="Phone" size={14} />
               8-990-121-70-46
             </a>
           </nav>
-          <button className="md:hidden p-2 text-foreground" onClick={() => setMenuOpen(!menuOpen)}>
-            <Icon name={menuOpen ? "X" : "Menu"} size={24} />
+
+          <button className="md:hidden p-2" onClick={() => setMenuOpen(!menuOpen)}>
+            <Icon name={menuOpen ? "X" : "Menu"} size={22} />
           </button>
         </div>
         {menuOpen && (
-          <div className="md:hidden bg-white border-t py-3">
+          <div className="md:hidden bg-white border-t py-3" style={{ borderColor: GOLD }}>
             {NAV_ITEMS.map(item => (
               <button key={item.id} onClick={() => scrollTo(item.id)}
-                className="block w-full text-left px-6 py-3 text-sm font-semibold text-foreground hover:text-brand">
+                className="block w-full text-left px-6 py-3 text-sm font-bold tracking-wider uppercase"
+                style={{ color: activeSection === item.id ? GOLD : DARK }}>
                 {item.label}
               </button>
             ))}
-            <a href="tel:+79901217046" className="block px-6 py-3 text-sm font-bold text-brand">
+            <a href="tel:+79901217046" className="block px-6 py-3 text-sm font-bold" style={{ color: GOLD }}>
               📞 8-990-121-70-46
             </a>
           </div>
@@ -161,137 +157,154 @@ export default function Index() {
       </header>
 
       {/* HERO */}
-      <section id="home" className="relative h-screen overflow-hidden mt-[70px]">
+      <section id="home" className="relative overflow-hidden mt-[68px]" style={{ height: "calc(100vh - 68px)" }}>
         <img src={HERO_IMG} alt='ЖК "Перспектива"' className="absolute inset-0 w-full h-full object-cover" />
-        <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, rgba(44,62,80,0.85) 0%, rgba(231,76,60,0.70) 100%)" }} />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(26,37,53,0.75) 0%, rgba(26,37,53,0.90) 100%)" }} />
         <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6">
-          <div className="animate-fade-in">
-            <h1 className="font-display text-white text-5xl md:text-7xl font-extrabold leading-tight mb-5">
-              Жилой комплекс <span style={{ color: "#ffd700" }}>«Перспектива»</span><br />в Скадовске
+          <div className="animate-fade-in max-w-4xl">
+            <div className="flex items-center justify-center gap-4 mb-6">
+              <div className="h-px w-16" style={{ background: GOLD }} />
+              <span className="text-xs font-bold tracking-[0.4em] uppercase" style={{ color: GOLD }}>Жилой комплекс · Скадовск · 2025</span>
+              <div className="h-px w-16" style={{ background: GOLD }} />
+            </div>
+            <h1 className="font-display text-white text-5xl md:text-7xl font-bold leading-tight mb-4" style={{ textShadow: "0 2px 20px rgba(0,0,0,0.4)" }}>
+              Жилой комплекс<br />
+              <span style={{ color: GOLD }}> «Перспектива»</span>
             </h1>
-            <p className="text-white/90 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
+            <p className="text-white/80 text-lg max-w-2xl mx-auto mb-10 leading-relaxed font-light">
               Современное комфортабельное жильё от проверенного застройщика с 15-летним опытом
             </p>
-            <div className="flex justify-center gap-10 md:gap-16 mb-10">
+            <div className="flex justify-center gap-12 md:gap-20 mb-12">
               {[
                 { num: "12", label: "жилых домов" },
                 { num: "2430", label: "квартир" },
                 { num: "15", label: "гектаров" },
               ].map(s => (
                 <div key={s.label} className="text-center">
-                  <div className="font-extrabold text-5xl leading-none mb-1" style={{ color: "#ffd700" }}>{s.num}</div>
-                  <div className="text-white/80 text-sm uppercase tracking-widest">{s.label}</div>
+                  <div className="font-display font-bold text-5xl mb-1" style={{ color: GOLD }}>{s.num}</div>
+                  <div className="text-white/60 text-xs uppercase tracking-[0.2em]">{s.label}</div>
                 </div>
               ))}
             </div>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button onClick={() => scrollTo("project")}
-                className="bg-brand text-white px-8 py-4 rounded-full text-sm font-bold hover:bg-brand-dark transition-all hover:-translate-y-1 shadow-lg">
+                className="px-10 py-4 text-sm font-bold tracking-[0.15em] uppercase text-white transition-opacity hover:opacity-85"
+                style={{ background: GOLD }}>
                 Забронировать квартиру
               </button>
-              <button onClick={() => scrollTo("project")}
-                className="border-2 border-white text-white px-8 py-4 rounded-full text-sm font-bold hover:bg-white hover:text-foreground transition-all">
-                Подробнее о проекте
+              <button onClick={() => scrollTo("about")}
+                className="px-10 py-4 text-sm font-bold tracking-[0.15em] uppercase text-white border-2 transition-colors hover:bg-white/10"
+                style={{ borderColor: "rgba(255,255,255,0.5)" }}>
+                О компании
               </button>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ADVANTAGES */}
-      <section className="bg-white py-24">
-        <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-center text-4xl font-extrabold text-foreground mb-12">Почему выбирают нас</h2>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            {[
-              { icon: "ShieldCheck", title: "Надёжность", desc: "Член СРО, все работы по ГОСТам и СНиПам" },
-              { icon: "Home", title: "Собственный контроль", desc: "Полный цикл строительства под нашим контролем" },
-              { icon: "Banknote", title: "Выгодные условия", desc: "Рассрочка, ипотека от партнёрских банков" },
-              { icon: "Trees", title: "Экология", desc: "Зелёная зона, парк, бассейн на территории" },
-            ].map(card => (
-              <AnimatedSection key={card.title}>
-                <div className="text-center p-10 bg-background rounded-xl hover:-translate-y-2 transition-transform duration-300">
-                  <div className="flex justify-center mb-5 text-brand">
-                    <Icon name={card.icon} size={48} />
-                  </div>
-                  <h3 className="text-lg font-bold text-foreground mb-2">{card.title}</h3>
-                  <p className="text-foreground/55 text-sm leading-relaxed">{card.desc}</p>
-                </div>
-              </AnimatedSection>
-            ))}
-          </div>
+      {/* ПРЕИМУЩЕСТВА — тёмная полоса */}
+      <section style={{ background: DARK }}>
+        <div className="max-w-7xl mx-auto px-6 py-14 grid grid-cols-2 md:grid-cols-4 gap-0 divide-x divide-white/10">
+          {[
+            { icon: "ShieldCheck", title: "Надёжность", desc: "Член СРО, все работы по ГОСТам и СНиПам" },
+            { icon: "Home", title: "Собственный контроль", desc: "Полный цикл строительства под нашим контролем" },
+            { icon: "Banknote", title: "Выгодные условия", desc: "Рассрочка, ипотека от партнёрских банков" },
+            { icon: "Trees", title: "Экология", desc: "Зелёная зона, парк, бассейн на территории" },
+          ].map(card => (
+            <div key={card.title} className="text-center px-8 py-2">
+              <div className="flex justify-center mb-3" style={{ color: GOLD }}>
+                <Icon name={card.icon} size={32} />
+              </div>
+              <div className="font-bold text-white text-sm tracking-wide mb-1">{card.title}</div>
+              <div className="text-white/40 text-xs leading-relaxed">{card.desc}</div>
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* ABOUT */}
-      <section id="about" className="py-24 px-6 bg-background">
+      {/* О КОМПАНИИ */}
+      <section id="about" className="py-24 px-6" style={{ background: CREAM }}>
         <div className="max-w-7xl mx-auto">
+
           {/* Заголовок + фото */}
-          <div className="grid md:grid-cols-2 gap-16 items-center mb-20">
-            <AnimatedSection>
-              <p className="text-brand text-sm font-bold tracking-[0.3em] uppercase mb-4">О компании</p>
-              <h2 className="font-display text-4xl md:text-5xl font-light text-foreground leading-tight mb-6">
-                ООО «СЗ ЦСК» — строим с опытом и ответственностью
+          <div className="grid md:grid-cols-2 gap-16 items-start mb-20">
+            <Reveal>
+              <div className="flex items-center gap-3 mb-5">
+                <div className="w-8 h-0.5" style={{ background: GOLD }} />
+                <span className="text-xs font-bold tracking-[0.3em] uppercase" style={{ color: GOLD }}>О компании</span>
+              </div>
+              <h2 className="font-display text-4xl md:text-5xl font-bold leading-tight mb-6" style={{ color: DARK }}>
+                ООО «СЗ ЦСК»
               </h2>
-              <p className="text-foreground/60 leading-relaxed mb-6">
+              <Divider />
+              <p className="leading-relaxed mb-4 text-sm" style={{ color: `${DARK}cc` }}>
                 ООО «Специализированный Застройщик ЦЕНТРСТРОЙКОМПЛЕКС» — компания с 15-летним опытом работы
                 на рынке строительства жилой недвижимости в Херсонской области.
               </p>
-              <div className="flex flex-col gap-3">
+              <div className="space-y-3 mt-6 text-sm border-l-2 pl-5" style={{ borderColor: GOLD }}>
                 {[
                   "Член СРО — все работы по ГОСТам и СНиПам",
                   "Полный цикл строительства под собственным контролем",
                   "Рассрочка и ипотека от партнёрских банков",
                 ].map(item => (
                   <div key={item} className="flex items-start gap-3">
-                    <Icon name="CheckCircle" size={16} className="text-brand mt-0.5 shrink-0" />
-                    <span className="text-foreground/70 text-sm">{item}</span>
+                    <Icon name="ChevronRight" size={14} className="mt-0.5 shrink-0" style={{ color: GOLD } as React.CSSProperties} />
+                    <span style={{ color: `${DARK}bb` }}>{item}</span>
                   </div>
                 ))}
               </div>
-            </AnimatedSection>
-            <AnimatedSection>
+            </Reveal>
+            <Reveal>
               <div className="relative">
-                <img src={INTERIOR_IMG} alt="О компании" className="w-full h-[420px] object-cover rounded-xl" />
-                <div className="absolute -bottom-5 -left-5 bg-white rounded-xl p-5 shadow-xl">
-                  <div className="font-display text-4xl font-bold text-brand">15+</div>
-                  <div className="text-foreground/50 text-xs tracking-wider uppercase mt-1">Лет на рынке</div>
+                <img src={INTERIOR_IMG} alt="О компании" className="w-full h-[420px] object-cover" style={{ borderLeft: `4px solid ${GOLD}` }} />
+                <div className="absolute -bottom-4 -left-4 bg-white p-5 border-l-4" style={{ borderColor: GOLD }}>
+                  <div className="font-display text-4xl font-bold" style={{ color: GOLD }}>15+</div>
+                  <div className="text-xs tracking-wider uppercase mt-1" style={{ color: `${DARK}88` }}>Лет на рынке</div>
                 </div>
               </div>
-            </AnimatedSection>
+            </Reveal>
           </div>
 
           {/* Миссия */}
-          <AnimatedSection>
-            <div className="rounded-2xl p-10 md:p-14 mb-16 text-white text-center" style={{ background: "linear-gradient(135deg, #2c3e50 0%, #e74c3c 100%)" }}>
-              <h3 className="font-display text-3xl md:text-4xl font-light mb-5">Наша миссия</h3>
-              <p className="text-white/80 max-w-3xl mx-auto leading-relaxed mb-10">
+          <Reveal>
+            <div className="border-2 p-10 md:p-14 mb-16 text-center" style={{ borderColor: GOLD, background: DARK }}>
+              <div className="flex items-center justify-center gap-4 mb-5">
+                <div className="h-px w-12" style={{ background: GOLD }} />
+                <span className="text-xs font-bold tracking-[0.4em] uppercase" style={{ color: GOLD }}>Наша миссия</span>
+                <div className="h-px w-12" style={{ background: GOLD }} />
+              </div>
+              <h3 className="font-display text-3xl font-bold text-white mb-5">
+                Качественное жильё для Херсонской области
+              </h3>
+              <p className="text-white/70 max-w-3xl mx-auto leading-relaxed mb-10 text-sm">
                 Мы создаём качественное и доступное жильё для жителей Херсонской области. Наша цель — строить не просто дома,
                 а современные жилые комплексы с развитой инфраструктурой, где каждая деталь продумана для комфортной жизни.
               </p>
-              <div className="grid grid-cols-3 gap-8 max-w-lg mx-auto">
+              <div className="grid grid-cols-3 gap-8 max-w-md mx-auto">
                 {[
                   { num: "15+", label: "лет опыта" },
                   { num: "50+", label: "реализованных проектов" },
                   { num: "2430", label: "квартир в проекте" },
                 ].map(s => (
                   <div key={s.label} className="text-center">
-                    <div className="font-extrabold text-4xl mb-1" style={{ color: "#ffd700" }}>{s.num}</div>
-                    <div className="text-white/60 text-xs uppercase tracking-wide">{s.label}</div>
+                    <div className="font-display font-bold text-4xl mb-1" style={{ color: GOLD }}>{s.num}</div>
+                    <div className="text-white/50 text-xs uppercase tracking-wide">{s.label}</div>
                   </div>
                 ))}
               </div>
             </div>
-          </AnimatedSection>
+          </Reveal>
 
-          {/* Реквизиты — 4 карточки */}
-          <AnimatedSection>
-            <h3 className="text-2xl font-extrabold text-foreground mb-8">Реквизиты компании</h3>
+          {/* Реквизиты */}
+          <Reveal>
+            <div className="flex items-center gap-3 mb-8">
+              <div className="w-8 h-0.5" style={{ background: GOLD }} />
+              <h3 className="font-display text-2xl font-bold" style={{ color: DARK }}>Реквизиты компании</h3>
+            </div>
             <div className="grid md:grid-cols-2 gap-6">
               {[
                 {
-                  icon: "Building2",
-                  title: "Основная информация",
+                  icon: "Building2", title: "Основная информация",
                   rows: [
                     { label: "Полное наименование", value: "ООО «Специализированный Застройщик ЦЕНТРСТРОЙКОМПЛЕКС»" },
                     { label: "Сокращённое", value: "ООО «СЗ ЦСК»" },
@@ -301,8 +314,7 @@ export default function Index() {
                   ],
                 },
                 {
-                  icon: "MapPin",
-                  title: "Адреса",
+                  icon: "MapPin", title: "Адреса",
                   rows: [
                     { label: "Юридический адрес", value: "275700, Херсонская обл., г. Скадовск, ул. Александровская, д. 51, оф. 4" },
                     { label: "Местонахождение", value: "275700, Херсонская обл., г. Скадовск, ул. Александровская, д. 51, оф. 4" },
@@ -310,8 +322,7 @@ export default function Index() {
                   ],
                 },
                 {
-                  icon: "Users",
-                  title: "Руководство",
+                  icon: "Users", title: "Руководство",
                   rows: [
                     { label: "Генеральный директор", value: "Рычков Максим Николаевич" },
                     { label: "Главный бухгалтер", value: "Рычков Максим Николаевич" },
@@ -320,8 +331,7 @@ export default function Index() {
                   ],
                 },
                 {
-                  icon: "Landmark",
-                  title: "Банковские реквизиты",
+                  icon: "Landmark", title: "Банковские реквизиты",
                   rows: [
                     { label: "Банк", value: 'ПАО "БАНК ПСБ"' },
                     { label: "Расчётный счёт", value: "40702 810 4 0000 0343234" },
@@ -330,52 +340,53 @@ export default function Index() {
                   ],
                 },
               ].map(card => (
-                <div key={card.title} className="bg-white rounded-xl p-7 shadow-sm border border-foreground/5">
+                <div key={card.title} className="bg-white border-t-4 p-7" style={{ borderColor: GOLD }}>
                   <div className="flex items-center gap-3 mb-5">
-                    <div className="w-9 h-9 bg-brand/10 text-brand rounded-full flex items-center justify-center shrink-0">
-                      <Icon name={card.icon} size={18} />
-                    </div>
-                    <h4 className="font-bold text-foreground">{card.title}</h4>
+                    <Icon name={card.icon} size={18} style={{ color: GOLD } as React.CSSProperties} />
+                    <h4 className="font-bold tracking-wide text-sm uppercase" style={{ color: DARK }}>{card.title}</h4>
                   </div>
                   <div className="space-y-3">
                     {card.rows.map(row => (
-                      <div key={row.label} className="flex gap-3 text-sm">
-                        <span className="text-foreground/40 shrink-0 w-36">{row.label}:</span>
-                        <span className="text-foreground font-medium">{row.value}</span>
+                      <div key={row.label} className="flex gap-3 text-sm border-b border-black/5 pb-2">
+                        <span className="shrink-0 w-36 text-xs" style={{ color: `${DARK}66` }}>{row.label}:</span>
+                        <span className="font-semibold text-xs" style={{ color: DARK }}>{row.value}</span>
                       </div>
                     ))}
                   </div>
                 </div>
               ))}
             </div>
-          </AnimatedSection>
+          </Reveal>
         </div>
       </section>
 
-      {/* PROJECT */}
+      {/* ПРОЕКТ */}
       <section id="project" className="py-24 px-6 bg-white">
         <div className="max-w-7xl mx-auto">
-          <AnimatedSection>
-            <p className="text-brand text-sm font-bold tracking-[0.3em] uppercase mb-3">Наш проект</p>
+          <Reveal>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-8 h-0.5" style={{ background: GOLD }} />
+              <span className="text-xs font-bold tracking-[0.3em] uppercase" style={{ color: GOLD }}>Наш проект</span>
+            </div>
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-4">
-              <h2 className="font-display text-4xl md:text-5xl font-light text-foreground leading-tight max-w-xl">
-                ЖК «Перспектива» — новый стандарт комфорта
+              <h2 className="font-display text-4xl md:text-5xl font-bold leading-tight max-w-xl" style={{ color: DARK }}>
+                ЖК «Перспектива» —<br />новый стандарт комфорта
               </h2>
-              <p className="text-foreground/50 text-sm max-w-xs leading-relaxed">
-                Расположен в северо-восточной части Скадовска на участке 15 гектаров.
+              <p className="text-sm max-w-xs leading-relaxed" style={{ color: `${DARK}88` }}>
+                Северо-восточная часть Скадовска, участок 15 гектаров.
               </p>
             </div>
-          </AnimatedSection>
+          </Reveal>
 
-          <AnimatedSection>
+          <Reveal>
             <div className="grid md:grid-cols-2 gap-12 mb-14 items-start">
               <div>
-                <p className="text-foreground/60 leading-relaxed mb-5">
+                <p className="leading-relaxed mb-6 text-sm" style={{ color: `${DARK}cc` }}>
                   В составе комплекса 12 пятиэтажных домов с современной отделкой фасадов облицовочным кирпичом.
                   2430 квартир различных планировок, подземные и наземные парковки, открытый бассейн,
                   спортивные площадки и детские зоны.
                 </p>
-                <ul className="flex flex-col gap-3">
+                <ul className="flex flex-col gap-3 border-l-2 pl-5" style={{ borderColor: GOLD }}>
                   {[
                     "2430 квартир различных планировок",
                     "Подземные и наземные парковки",
@@ -383,14 +394,14 @@ export default function Index() {
                     "Детские и игровые зоны",
                     "Зона рекреации с фонтаном и ротондами",
                   ].map(item => (
-                    <li key={item} className="flex items-start gap-3">
-                      <Icon name="CheckCircle" size={16} className="text-brand mt-0.5 shrink-0" />
-                      <span className="text-foreground/70 text-sm">{item}</span>
+                    <li key={item} className="flex items-start gap-3 text-sm" style={{ color: `${DARK}bb` }}>
+                      <Icon name="ChevronRight" size={14} className="mt-0.5 shrink-0" style={{ color: GOLD } as React.CSSProperties} />
+                      {item}
                     </li>
                   ))}
                 </ul>
               </div>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-3 gap-3">
                 {[
                   { num: "12", label: "жилых домов" },
                   { num: "2430", label: "квартир" },
@@ -399,170 +410,186 @@ export default function Index() {
                   { num: "3", label: "типа планировок" },
                   { num: "2025", label: "год продаж" },
                 ].map(s => (
-                  <div key={s.label} className="bg-background rounded-xl p-5 text-center">
-                    <div className="font-display text-3xl font-bold text-brand mb-1">{s.num}</div>
-                    <div className="text-foreground/40 text-xs uppercase tracking-wide leading-tight">{s.label}</div>
+                  <div key={s.label} className="p-5 text-center border" style={{ borderColor: `${GOLD}44`, background: CREAM }}>
+                    <div className="font-display text-3xl font-bold mb-1" style={{ color: GOLD }}>{s.num}</div>
+                    <div className="text-xs uppercase tracking-wide leading-tight" style={{ color: `${DARK}66` }}>{s.label}</div>
                   </div>
                 ))}
               </div>
             </div>
-          </AnimatedSection>
+          </Reveal>
 
-          {/* APARTMENTS */}
-          <AnimatedSection>
-            <h3 className="text-3xl font-extrabold text-foreground mb-8">Выберите свою квартиру</h3>
+          {/* КВАРТИРЫ */}
+          <Reveal>
+            <div className="flex items-center gap-3 mb-8">
+              <div className="w-8 h-0.5" style={{ background: GOLD }} />
+              <h3 className="font-display text-2xl font-bold" style={{ color: DARK }}>Выберите квартиру</h3>
+            </div>
             <div className="grid md:grid-cols-3 gap-6 mb-14">
               {APARTMENTS.map(apt => (
-                <div key={apt.rooms}
-                  className={`bg-background rounded-xl p-8 relative hover:-translate-y-2 transition-all duration-300 ${apt.popular ? "ring-2 ring-brand shadow-xl" : "hover:shadow-xl"}`}>
+                <div key={apt.rooms} className="bg-white border-2 p-8 relative transition-shadow hover:shadow-lg"
+                  style={{ borderColor: apt.popular ? GOLD : `${DARK}15` }}>
                   {apt.popular && (
-                    <div className="absolute -top-3 right-5 bg-brand text-white text-xs px-4 py-1.5 rounded-full font-semibold">
+                    <div className="absolute -top-3 left-6 text-white text-xs px-4 py-1 font-bold tracking-wider uppercase"
+                      style={{ background: GOLD }}>
                       Популярно
                     </div>
                   )}
-                  <h3 className="text-xl font-bold text-foreground mb-1">{apt.rooms}</h3>
-                  <p className="text-foreground/40 text-sm mb-5">{apt.area}</p>
-                  <div className="space-y-2 mb-5">
+                  <h3 className="font-display text-xl font-bold mb-1" style={{ color: DARK }}>{apt.rooms}</h3>
+                  <p className="text-xs mb-5 tracking-wide" style={{ color: `${DARK}66` }}>{apt.area}</p>
+                  <div className="space-y-2 mb-6 border-l-2 pl-4" style={{ borderColor: `${GOLD}55` }}>
                     {apt.features.map(f => (
-                      <div key={f} className="flex items-start gap-2 text-sm text-foreground/60">
-                        <Icon name="CheckCircle" size={15} className="text-brand mt-0.5 shrink-0" />
-                        {f}
-                      </div>
+                      <div key={f} className="text-xs" style={{ color: `${DARK}99` }}>{f}</div>
                     ))}
                   </div>
-                  <div className="text-2xl font-extrabold text-brand mb-5">{apt.price}</div>
+                  <div className="font-display text-2xl font-bold mb-6" style={{ color: GOLD }}>{apt.price}</div>
                   <button
                     onClick={() => { setBookingApt(apt.rooms); scrollTo("contacts"); }}
-                    className="w-full border-2 border-brand text-brand py-3 rounded-full text-sm font-bold hover:bg-brand hover:text-white transition-all"
-                  >
+                    className="w-full py-3 text-sm font-bold tracking-wider uppercase border-2 transition-all hover:text-white"
+                    style={{ borderColor: DARK, color: DARK }}
+                    onMouseEnter={e => { (e.target as HTMLElement).style.background = DARK; }}
+                    onMouseLeave={e => { (e.target as HTMLElement).style.background = "transparent"; }}>
                     Выбрать
                   </button>
                 </div>
               ))}
             </div>
-          </AnimatedSection>
+          </Reveal>
 
-          {/* CALCULATOR */}
-          <AnimatedSection>
-            <div className="rounded-2xl overflow-hidden" style={{ background: "linear-gradient(135deg, #2c3e50 0%, #e74c3c 100%)" }}>
-              <div className="p-10 md:p-14 text-white">
-                <p className="text-white/50 text-sm tracking-[0.3em] uppercase mb-3">Калькулятор</p>
-                <h3 className="font-display text-4xl md:text-5xl font-light mb-10">Рассчитайте стоимость квартиры</h3>
-                <div className="grid md:grid-cols-2 gap-10">
-                  <div className="space-y-8">
-                    <div>
-                      <div className="flex justify-between mb-3">
-                        <label className="text-white/60 text-sm tracking-wider uppercase">Площадь</label>
-                        <span className="font-bold text-2xl" style={{ color: "#ffd700" }}>{area} м²</span>
-                      </div>
-                      <input type="range" min={35} max={85} value={area}
-                        onChange={e => setArea(Number(e.target.value))} className="w-full cursor-pointer"
-                        style={{ height: "2px", appearance: "none", WebkitAppearance: "none",
-                          background: `linear-gradient(to right, #ffd700 ${((area - 35) / 50) * 100}%, rgba(255,255,255,0.2) 0%)` }} />
-                      <div className="flex justify-between text-white/30 text-xs mt-2"><span>35 м²</span><span>85 м²</span></div>
+          {/* КАЛЬКУЛЯТОР */}
+          <Reveal>
+            <div className="border-2 p-10 md:p-14" style={{ borderColor: GOLD, background: DARK }}>
+              <div className="flex items-center gap-3 mb-3">
+                <div className="h-px w-8" style={{ background: GOLD }} />
+                <span className="text-xs font-bold tracking-[0.3em] uppercase" style={{ color: GOLD }}>Калькулятор стоимости</span>
+              </div>
+              <h3 className="font-display text-3xl md:text-4xl font-bold text-white mb-10">
+                Рассчитайте стоимость квартиры
+              </h3>
+              <div className="grid md:grid-cols-2 gap-10">
+                <div className="space-y-8">
+                  <div>
+                    <div className="flex justify-between mb-3">
+                      <label className="text-xs font-bold tracking-[0.2em] uppercase" style={{ color: `${GOLD}cc` }}>Площадь</label>
+                      <span className="font-display font-bold text-2xl" style={{ color: GOLD }}>{area} м²</span>
                     </div>
-                    <div>
-                      <div className="flex justify-between mb-3">
-                        <label className="text-white/60 text-sm tracking-wider uppercase">Этаж</label>
-                        <span className="font-bold text-2xl" style={{ color: "#ffd700" }}>{floor}-й этаж</span>
-                      </div>
-                      <input type="range" min={1} max={5} value={floor}
-                        onChange={e => setFloor(Number(e.target.value))} className="w-full cursor-pointer"
-                        style={{ height: "2px", appearance: "none", WebkitAppearance: "none",
-                          background: `linear-gradient(to right, #ffd700 ${((floor - 1) / 4) * 100}%, rgba(255,255,255,0.2) 0%)` }} />
-                      <div className="flex justify-between text-white/30 text-xs mt-2"><span>1 этаж</span><span>5 этаж</span></div>
-                    </div>
-                    <div>
-                      <label className="text-white/60 text-sm tracking-wider uppercase block mb-3">Отделка</label>
-                      <div className="grid grid-cols-3 gap-2">
-                        {FINISH_OPTIONS.map(opt => (
-                          <button key={opt.id} onClick={() => setFinish(opt.id)}
-                            className={`py-3 px-2 text-xs rounded-full font-semibold transition-all border-2 ${
-                              finish === opt.id
-                                ? "bg-white text-foreground border-white"
-                                : "border-white/20 text-white/60 hover:border-white/60 hover:text-white"
-                            }`}>
-                            {opt.label}
-                          </button>
-                        ))}
-                      </div>
+                    <input type="range" min={35} max={85} value={area}
+                      onChange={e => setArea(Number(e.target.value))} className="w-full cursor-pointer"
+                      style={{ height: "2px", appearance: "none", WebkitAppearance: "none",
+                        background: `linear-gradient(to right, ${GOLD} ${((area - 35) / 50) * 100}%, rgba(255,255,255,0.15) 0%)` }} />
+                    <div className="flex justify-between text-xs mt-2" style={{ color: "rgba(255,255,255,0.25)" }}>
+                      <span>35 м²</span><span>85 м²</span>
                     </div>
                   </div>
-                  <div className="flex flex-col justify-center bg-white/10 rounded-2xl p-8 backdrop-blur-sm">
-                    <p className="text-white/50 text-sm tracking-wider uppercase mb-2">Стоимость квартиры</p>
-                    <div className="font-bold text-5xl md:text-6xl mb-2 leading-none" style={{ color: "#ffd700" }}>
-                      {(totalPrice / 1_000_000).toFixed(1)} млн ₽
+                  <div>
+                    <div className="flex justify-between mb-3">
+                      <label className="text-xs font-bold tracking-[0.2em] uppercase" style={{ color: `${GOLD}cc` }}>Этаж</label>
+                      <span className="font-display font-bold text-2xl" style={{ color: GOLD }}>{floor}-й этаж</span>
                     </div>
-                    <p className="text-white/40 text-sm mb-6">
-                      {pricePerMeter.toLocaleString("ru-RU")} ₽ за м² · {area} м² · {floor}-й этаж
-                    </p>
-                    <div className="space-y-2 mb-8 text-sm">
-                      <div className="flex justify-between text-white/50">
-                        <span>Базовая цена</span><span>{BASE_PRICE.toLocaleString("ru-RU")} ₽/м²</span>
-                      </div>
-                      {finishAdd > 0 && (
-                        <div className="flex justify-between text-white/50">
-                          <span>Отделка</span><span>+{finishAdd.toLocaleString("ru-RU")} ₽/м²</span>
-                        </div>
-                      )}
-                      {floorCoeff !== 1.0 && (
-                        <div className="flex justify-between text-white/50">
-                          <span>Коэффициент этажа</span><span>×{floorCoeff}</span>
-                        </div>
-                      )}
+                    <input type="range" min={1} max={5} value={floor}
+                      onChange={e => setFloor(Number(e.target.value))} className="w-full cursor-pointer"
+                      style={{ height: "2px", appearance: "none", WebkitAppearance: "none",
+                        background: `linear-gradient(to right, ${GOLD} ${((floor - 1) / 4) * 100}%, rgba(255,255,255,0.15) 0%)` }} />
+                    <div className="flex justify-between text-xs mt-2" style={{ color: "rgba(255,255,255,0.25)" }}>
+                      <span>1 этаж</span><span>5 этаж</span>
                     </div>
-                    <button onClick={() => scrollTo("contacts")}
-                      className="bg-brand text-white py-4 rounded-full text-sm font-bold hover:bg-brand-dark transition-colors">
-                      Оставить заявку
-                    </button>
                   </div>
+                  <div>
+                    <label className="text-xs font-bold tracking-[0.2em] uppercase block mb-3" style={{ color: `${GOLD}cc` }}>Отделка</label>
+                    <div className="grid grid-cols-3 gap-2">
+                      {FINISH_OPTIONS.map(opt => (
+                        <button key={opt.id} onClick={() => setFinish(opt.id)}
+                          className="py-3 px-2 text-xs font-bold tracking-wider uppercase transition-all border-2"
+                          style={{
+                            borderColor: finish === opt.id ? GOLD : "rgba(255,255,255,0.15)",
+                            background: finish === opt.id ? GOLD : "transparent",
+                            color: finish === opt.id ? DARK : "rgba(255,255,255,0.5)"
+                          }}>
+                          {opt.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex flex-col justify-center p-8 border-2" style={{ borderColor: `${GOLD}40` }}>
+                  <p className="text-xs font-bold tracking-[0.2em] uppercase mb-2" style={{ color: `${GOLD}99` }}>Стоимость квартиры</p>
+                  <div className="font-display font-bold text-5xl mb-2 leading-none" style={{ color: GOLD }}>
+                    {(totalPrice / 1_000_000).toFixed(1)} млн ₽
+                  </div>
+                  <p className="text-xs mb-6" style={{ color: "rgba(255,255,255,0.35)" }}>
+                    {pricePerMeter.toLocaleString("ru-RU")} ₽ за м² · {area} м² · {floor}-й этаж
+                  </p>
+                  <div className="space-y-2 mb-8 text-xs" style={{ borderTop: "1px solid rgba(255,255,255,0.1)", paddingTop: "16px" }}>
+                    <div className="flex justify-between" style={{ color: "rgba(255,255,255,0.4)" }}>
+                      <span>Базовая цена</span><span>{BASE_PRICE.toLocaleString("ru-RU")} ₽/м²</span>
+                    </div>
+                    {finishAdd > 0 && (
+                      <div className="flex justify-between" style={{ color: "rgba(255,255,255,0.4)" }}>
+                        <span>Отделка</span><span>+{finishAdd.toLocaleString("ru-RU")} ₽/м²</span>
+                      </div>
+                    )}
+                    {floorCoeff !== 1.0 && (
+                      <div className="flex justify-between" style={{ color: "rgba(255,255,255,0.4)" }}>
+                        <span>Коэффициент этажа</span><span>×{floorCoeff}</span>
+                      </div>
+                    )}
+                  </div>
+                  <button onClick={() => scrollTo("contacts")}
+                    className="py-4 text-sm font-bold tracking-[0.15em] uppercase text-white transition-opacity hover:opacity-85"
+                    style={{ background: GOLD }}>
+                    Оставить заявку
+                  </button>
                 </div>
               </div>
             </div>
-          </AnimatedSection>
+          </Reveal>
         </div>
       </section>
 
-      {/* GALLERY */}
-      <section id="gallery" className="py-24 px-6 bg-background">
+      {/* ГАЛЕРЕЯ */}
+      <section id="gallery" className="py-24 px-6" style={{ background: CREAM }}>
         <div className="max-w-7xl mx-auto">
-          <AnimatedSection>
-            <p className="text-brand text-sm font-bold tracking-[0.3em] uppercase mb-3">Галерея</p>
-            <h2 className="font-display text-4xl md:text-5xl font-light text-foreground mb-14 max-w-lg">
+          <Reveal>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-8 h-0.5" style={{ background: GOLD }} />
+              <span className="text-xs font-bold tracking-[0.3em] uppercase" style={{ color: GOLD }}>Галерея</span>
+            </div>
+            <h2 className="font-display text-4xl md:text-5xl font-bold mb-14" style={{ color: DARK }}>
               ЖК «Перспектива» в деталях
             </h2>
-          </AnimatedSection>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-5">
+          </Reveal>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {GALLERY_ITEMS.map((item, i) => (
-              <AnimatedSection key={i}>
-                <div className="group relative overflow-hidden rounded-xl cursor-pointer shadow-md hover:-translate-y-2 hover:shadow-2xl transition-all duration-400"
-                  style={{ height: "250px" }}>
+              <Reveal key={i}>
+                <div className="group relative overflow-hidden cursor-pointer" style={{ height: "260px", borderTop: `3px solid ${GOLD}` }}>
                   <img src={item.img} alt={item.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    style={{ background: "rgba(26,37,53,0.75)" }} />
                   <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                    <p className="text-white font-semibold text-sm">{item.title}</p>
-                    <p className="text-white/60 text-xs">{item.year}</p>
-                  </div>
-                  <div className="absolute top-3 right-3 bg-white/90 w-9 h-9 rounded-full flex items-center justify-center text-brand opacity-0 group-hover:opacity-100 transition-opacity duration-300 scale-90 group-hover:scale-100">
-                    <Icon name="ZoomIn" size={16} />
+                    <p className="text-white font-bold text-sm tracking-wide">{item.title}</p>
+                    <p className="text-xs mt-0.5" style={{ color: GOLD }}>{item.year}</p>
                   </div>
                 </div>
-              </AnimatedSection>
+              </Reveal>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CONTACTS */}
+      {/* КОНТАКТЫ */}
       <section id="contacts" className="py-24 px-6 bg-white">
         <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-16">
-          <AnimatedSection>
-            <p className="text-brand text-sm font-bold tracking-[0.3em] uppercase mb-4">Контакты</p>
-            <h2 className="font-display text-4xl md:text-5xl font-light text-foreground leading-tight mb-6">
-              Забронируйте квартиру — мы перезвоним
+          <Reveal>
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-8 h-0.5" style={{ background: GOLD }} />
+              <span className="text-xs font-bold tracking-[0.3em] uppercase" style={{ color: GOLD }}>Контакты</span>
+            </div>
+            <h2 className="font-display text-4xl md:text-5xl font-bold leading-tight mb-6" style={{ color: DARK }}>
+              Забронируйте квартиру
             </h2>
-            <p className="text-foreground/60 leading-relaxed mb-10">
+            <Divider />
+            <p className="leading-relaxed mb-10 text-sm" style={{ color: `${DARK}99` }}>
               Наши менеджеры помогут подобрать квартиру, рассчитают рассрочку или ипотеку
               и запишут на экскурсию по объекту.
             </p>
@@ -572,90 +599,97 @@ export default function Index() {
                 { icon: "Mail", label: "Email", value: "ooo.sz-csk@yandex.ru" },
                 { icon: "MapPin", label: "Юридический адрес", value: "275700, Херсонская обл., г. Скадовск, ул. Александровская, д. 51, оф. 4" },
               ].map(contact => (
-                <div key={contact.label} className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-brand/10 text-brand rounded-full flex items-center justify-center shrink-0 mt-0.5">
-                    <Icon name={contact.icon} size={18} />
-                  </div>
+                <div key={contact.label} className="flex items-start gap-4 border-l-2 pl-4" style={{ borderColor: `${GOLD}55` }}>
+                  <Icon name={contact.icon} size={16} className="mt-0.5 shrink-0" style={{ color: GOLD } as React.CSSProperties} />
                   <div>
-                    <p className="text-foreground/40 text-xs tracking-wider uppercase mb-0.5">{contact.label}</p>
-                    <p className="text-foreground font-semibold">{contact.value}</p>
+                    <p className="text-xs uppercase tracking-wider mb-0.5" style={{ color: `${DARK}55` }}>{contact.label}</p>
+                    <p className="font-bold text-sm" style={{ color: DARK }}>{contact.value}</p>
                   </div>
                 </div>
               ))}
             </div>
-          </AnimatedSection>
+          </Reveal>
 
-          <AnimatedSection>
+          <Reveal>
             <form className="space-y-5" onSubmit={e => e.preventDefault()}>
               {bookingApt && (
-                <div className="flex items-center justify-between bg-brand/10 border border-brand/20 rounded-lg px-5 py-3">
-                  <span className="text-sm text-foreground font-medium">Выбрана: {bookingApt}</span>
-                  <button onClick={() => setBookingApt(null)} className="text-foreground/40 hover:text-foreground ml-3">
+                <div className="flex items-center justify-between px-5 py-3 border-l-4 bg-amber-50"
+                  style={{ borderColor: GOLD }}>
+                  <span className="text-sm font-semibold" style={{ color: DARK }}>Выбрана: {bookingApt}</span>
+                  <button onClick={() => setBookingApt(null)} className="ml-3" style={{ color: `${DARK}66` }}>
                     <Icon name="X" size={16} />
                   </button>
                 </div>
               )}
-              <div>
-                <label className="block text-foreground/50 text-xs tracking-wider uppercase mb-2">ФИО</label>
-                <input type="text" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="Иванов Иван Иванович"
-                  className="w-full bg-background border-2 border-foreground/10 rounded-lg px-5 py-3.5 text-foreground placeholder:text-foreground/25 focus:outline-none focus:border-brand transition-colors" />
-              </div>
-              <div>
-                <label className="block text-foreground/50 text-xs tracking-wider uppercase mb-2">Телефон *</label>
-                <input type="tel" value={formData.phone} onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                  placeholder="+7 (___) ___-__-__" required
-                  className="w-full bg-background border-2 border-foreground/10 rounded-lg px-5 py-3.5 text-foreground placeholder:text-foreground/25 focus:outline-none focus:border-brand transition-colors" />
-              </div>
-              <div>
-                <label className="block text-foreground/50 text-xs tracking-wider uppercase mb-2">Email</label>
-                <input type="email" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })}
-                  placeholder="example@mail.ru"
-                  className="w-full bg-background border-2 border-foreground/10 rounded-lg px-5 py-3.5 text-foreground placeholder:text-foreground/25 focus:outline-none focus:border-brand transition-colors" />
-              </div>
+              {[
+                { label: "ФИО", type: "text", value: formData.name, placeholder: "Иванов Иван Иванович", key: "name" },
+                { label: "Телефон *", type: "tel", value: formData.phone, placeholder: "+7 (___) ___-__-__", key: "phone" },
+                { label: "Email", type: "email", value: formData.email, placeholder: "example@mail.ru", key: "email" },
+              ].map(field => (
+                <div key={field.key}>
+                  <label className="block text-xs font-bold tracking-[0.2em] uppercase mb-2" style={{ color: `${DARK}77` }}>
+                    {field.label}
+                  </label>
+                  <input type={field.type} value={field.value} placeholder={field.placeholder}
+                    onChange={e => setFormData({ ...formData, [field.key]: e.target.value })}
+                    className="w-full px-5 py-4 text-sm border-2 bg-white focus:outline-none transition-colors"
+                    style={{ borderColor: `${DARK}20`, color: DARK }}
+                    onFocus={e => (e.target.style.borderColor = GOLD)}
+                    onBlur={e => (e.target.style.borderColor = `${DARK}20`)}
+                  />
+                </div>
+              ))}
               <button type="submit"
-                className="w-full bg-brand text-white py-4 rounded-full text-sm font-bold hover:bg-brand-dark transition-all hover:-translate-y-1 shadow-md hover:shadow-lg">
+                className="w-full py-4 text-sm font-bold tracking-[0.15em] uppercase text-white transition-opacity hover:opacity-85"
+                style={{ background: DARK }}>
                 Отправить заявку
               </button>
-              <p className="text-foreground/30 text-xs leading-relaxed text-center">
+              <p className="text-xs text-center" style={{ color: `${DARK}44` }}>
                 Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности
               </p>
             </form>
-          </AnimatedSection>
+          </Reveal>
         </div>
       </section>
 
       {/* FOOTER */}
-      <footer className="py-14 px-6" style={{ background: "#2c3e50", color: "white" }}>
+      <footer className="py-14 px-6" style={{ background: DARK, borderTop: `3px solid ${GOLD}` }}>
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-3 gap-10 mb-10">
             <div>
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-[50px] h-[50px] bg-brand rounded-lg flex items-center justify-center text-white text-xl font-extrabold">СЗ</div>
-                <div className="font-bold text-base">ООО «СЗ ЦСК»</div>
+                <div className="w-10 h-10 flex items-center justify-center text-white text-sm font-bold" style={{ background: GOLD }}>СЗ</div>
+                <div>
+                  <div className="font-bold text-white text-sm">ООО «СЗ ЦСК»</div>
+                  <div className="text-xs tracking-wider" style={{ color: `${GOLD}99` }}>Специализированный застройщик</div>
+                </div>
               </div>
-              <p className="text-white/50 text-sm leading-relaxed">
-                Специализированный застройщик.<br />
-                Строительство жилых комплексов в Херсонской области.
+              <p className="text-xs leading-relaxed" style={{ color: "rgba(255,255,255,0.4)" }}>
+                Строительство жилых комплексов<br />в Херсонской области.
               </p>
             </div>
             <div>
-              <h4 className="text-white/60 text-xs tracking-widest uppercase mb-4">Контакты</h4>
-              <div className="space-y-2 text-sm text-white/50">
-                <div className="flex gap-2 items-start"><Icon name="MapPin" size={14} className="mt-0.5 shrink-0" /><span>275700, Херсонская обл., г. Скадовск, ул. Александровская, д. 51, оф. 4</span></div>
-                <div className="flex gap-2 items-center"><Icon name="Mail" size={14} /><span>ooo.sz-csk@yandex.ru</span></div>
-                <div className="flex gap-2 items-center"><Icon name="Phone" size={14} /><span>8-990-121-70-46</span></div>
+              <h4 className="text-xs font-bold tracking-[0.3em] uppercase mb-4" style={{ color: GOLD }}>Контакты</h4>
+              <div className="space-y-2 text-xs" style={{ color: "rgba(255,255,255,0.45)" }}>
+                <div className="flex gap-2 items-start">
+                  <Icon name="MapPin" size={12} className="mt-0.5 shrink-0" />
+                  <span>275700, Херсонская обл., г. Скадовск, ул. Александровская, д. 51, оф. 4</span>
+                </div>
+                <div className="flex gap-2 items-center"><Icon name="Mail" size={12} /><span>ooo.sz-csk@yandex.ru</span></div>
+                <div className="flex gap-2 items-center"><Icon name="Phone" size={12} /><span>8-990-121-70-46</span></div>
               </div>
             </div>
             <div>
-              <h4 className="text-white/60 text-xs tracking-widest uppercase mb-4">Проекты</h4>
-              <div className="space-y-2 text-sm">
-                <button onClick={() => scrollTo("project")} className="block text-white/50 hover:text-brand transition-colors">ЖК «Перспектива»</button>
-                <span className="block text-white/25">Планируемые проекты</span>
+              <h4 className="text-xs font-bold tracking-[0.3em] uppercase mb-4" style={{ color: GOLD }}>Проекты</h4>
+              <div className="space-y-2 text-xs">
+                <button onClick={() => scrollTo("project")} className="block transition-colors hover:opacity-80" style={{ color: "rgba(255,255,255,0.45)" }}>
+                  ЖК «Перспектива»
+                </button>
+                <span className="block" style={{ color: "rgba(255,255,255,0.2)" }}>Планируемые проекты</span>
               </div>
             </div>
           </div>
-          <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row justify-between gap-2 text-white/30 text-sm">
+          <div className="pt-6 flex flex-col md:flex-row justify-between gap-2 text-xs" style={{ borderTop: `1px solid rgba(255,255,255,0.1)`, color: "rgba(255,255,255,0.25)" }}>
             <span>© 2025 ООО «СЗ ЦСК». Все права защищены.</span>
             <span>Генеральный директор: Рычков Максим Николаевич</span>
           </div>

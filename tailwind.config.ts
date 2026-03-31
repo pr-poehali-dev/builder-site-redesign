@@ -20,8 +20,8 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				'display': ['Cormorant', 'serif'],
-				'body': ['Golos Text', 'sans-serif'],
+				'display': ['"Playfair Display"', 'serif'],
+				'body': ['"PT Sans"', 'sans-serif'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',
@@ -33,6 +33,7 @@ export default {
 					DEFAULT: 'hsl(var(--brand))',
 					dark: 'hsl(var(--brand-dark))',
 				},
+				gold: 'hsl(var(--gold))',
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
 					foreground: 'hsl(var(--primary-foreground))'
@@ -73,9 +74,9 @@ export default {
 				}
 			},
 			borderRadius: {
-				lg: 'var(--radius)',
-				md: 'calc(var(--radius) - 2px)',
-				sm: 'calc(var(--radius) - 4px)'
+				lg: '0px',
+				md: '0px',
+				sm: '0px'
 			},
 			keyframes: {
 				'fade-in': {
