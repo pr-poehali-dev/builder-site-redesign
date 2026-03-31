@@ -4,17 +4,23 @@
 
 @layer base {
   :root {
-    --background: 30 20% 97%;
-    --foreground: 25 15% 12%;
+    /* #f8f9fa фон, #2c3e50 текст */
+    --background: 210 17% 98%;
+    --foreground: 210 27% 23%;
+
+    /* Акцент — красный #e74c3c */
+    --brand: 5 76% 57%;
+    --brand-dark: 5 76% 46%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 210 27% 23%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 210 27% 23%;
 
-    --primary: 25 15% 12%;
-    --primary-foreground: 30 20% 97%;
+    /* primary = тёмно-синий #2c3e50 */
+    --primary: 210 27% 23%;
+    --primary-foreground: 210 17% 98%;
 
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
