@@ -225,49 +225,128 @@ export default function Index() {
 
       {/* ABOUT */}
       <section id="about" className="py-24 px-6 bg-background">
-        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+        <div className="max-w-7xl mx-auto">
+          {/* Заголовок + фото */}
+          <div className="grid md:grid-cols-2 gap-16 items-center mb-20">
+            <AnimatedSection>
+              <p className="text-brand text-sm font-bold tracking-[0.3em] uppercase mb-4">О компании</p>
+              <h2 className="font-display text-4xl md:text-5xl font-light text-foreground leading-tight mb-6">
+                ООО «СЗ ЦСК» — строим с опытом и ответственностью
+              </h2>
+              <p className="text-foreground/60 leading-relaxed mb-6">
+                ООО «Специализированный Застройщик ЦЕНТРСТРОЙКОМПЛЕКС» — компания с 15-летним опытом работы
+                на рынке строительства жилой недвижимости в Херсонской области.
+              </p>
+              <div className="flex flex-col gap-3">
+                {[
+                  "Член СРО — все работы по ГОСТам и СНиПам",
+                  "Полный цикл строительства под собственным контролем",
+                  "Рассрочка и ипотека от партнёрских банков",
+                ].map(item => (
+                  <div key={item} className="flex items-start gap-3">
+                    <Icon name="CheckCircle" size={16} className="text-brand mt-0.5 shrink-0" />
+                    <span className="text-foreground/70 text-sm">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </AnimatedSection>
+            <AnimatedSection>
+              <div className="relative">
+                <img src={INTERIOR_IMG} alt="О компании" className="w-full h-[420px] object-cover rounded-xl" />
+                <div className="absolute -bottom-5 -left-5 bg-white rounded-xl p-5 shadow-xl">
+                  <div className="font-display text-4xl font-bold text-brand">15+</div>
+                  <div className="text-foreground/50 text-xs tracking-wider uppercase mt-1">Лет на рынке</div>
+                </div>
+              </div>
+            </AnimatedSection>
+          </div>
+
+          {/* Миссия */}
           <AnimatedSection>
-            <p className="text-brand text-sm font-bold tracking-[0.3em] uppercase mb-4">О компании</p>
-            <h2 className="font-display text-4xl md:text-5xl font-light text-foreground leading-tight mb-6">
-              ООО «СЗ ЦСК» — строим с опытом и ответственностью
-            </h2>
-            <p className="text-foreground/60 leading-relaxed mb-4">
-              ООО «Специализированный Застройщик ЦЕНТРСТРОЙКОМПЛЕКС» — компания с 15-летним опытом работы
-              на рынке строительства жилой недвижимости в Херсонской области.
-            </p>
-            <div className="space-y-2 mb-8 text-sm border border-foreground/10 rounded-xl p-5 bg-white">
-              {[
-                { label: "ОГРН", value: "1259500001529" },
-                { label: "ИНН/КПП", value: "9500030539 / 950001001" },
-                { label: "В реестре с", value: "04.04.2025" },
-                { label: "Генеральный директор", value: "Рычков Максим Николаевич" },
-              ].map(d => (
-                <div key={d.label} className="flex gap-3">
-                  <span className="text-foreground/40 w-44 shrink-0">{d.label}:</span>
-                  <span className="text-foreground font-semibold">{d.value}</span>
-                </div>
-              ))}
-            </div>
-            <div className="flex flex-col gap-3">
-              {[
-                "Член СРО — все работы по ГОСТам и СНиПам",
-                "Полный цикл строительства под собственным контролем",
-                "Рассрочка и ипотека от партнёрских банков",
-              ].map(item => (
-                <div key={item} className="flex items-start gap-3">
-                  <Icon name="CheckCircle" size={16} className="text-brand mt-0.5 shrink-0" />
-                  <span className="text-foreground/70 text-sm">{item}</span>
-                </div>
-              ))}
+            <div className="rounded-2xl p-10 md:p-14 mb-16 text-white text-center" style={{ background: "linear-gradient(135deg, #2c3e50 0%, #e74c3c 100%)" }}>
+              <h3 className="font-display text-3xl md:text-4xl font-light mb-5">Наша миссия</h3>
+              <p className="text-white/80 max-w-3xl mx-auto leading-relaxed mb-10">
+                Мы создаём качественное и доступное жильё для жителей Херсонской области. Наша цель — строить не просто дома,
+                а современные жилые комплексы с развитой инфраструктурой, где каждая деталь продумана для комфортной жизни.
+              </p>
+              <div className="grid grid-cols-3 gap-8 max-w-lg mx-auto">
+                {[
+                  { num: "15+", label: "лет опыта" },
+                  { num: "50+", label: "реализованных проектов" },
+                  { num: "2430", label: "квартир в проекте" },
+                ].map(s => (
+                  <div key={s.label} className="text-center">
+                    <div className="font-extrabold text-4xl mb-1" style={{ color: "#ffd700" }}>{s.num}</div>
+                    <div className="text-white/60 text-xs uppercase tracking-wide">{s.label}</div>
+                  </div>
+                ))}
+              </div>
             </div>
           </AnimatedSection>
+
+          {/* Реквизиты — 4 карточки */}
           <AnimatedSection>
-            <div className="relative">
-              <img src={INTERIOR_IMG} alt="О компании" className="w-full h-[480px] object-cover rounded-xl" />
-              <div className="absolute -bottom-5 -left-5 bg-white rounded-xl p-5 shadow-xl">
-                <div className="font-display text-4xl font-bold text-brand">15+</div>
-                <div className="text-foreground/50 text-xs tracking-wider uppercase mt-1">Лет на рынке</div>
-              </div>
+            <h3 className="text-2xl font-extrabold text-foreground mb-8">Реквизиты компании</h3>
+            <div className="grid md:grid-cols-2 gap-6">
+              {[
+                {
+                  icon: "Building2",
+                  title: "Основная информация",
+                  rows: [
+                    { label: "Полное наименование", value: "ООО «Специализированный Застройщик ЦЕНТРСТРОЙКОМПЛЕКС»" },
+                    { label: "Сокращённое", value: "ООО «СЗ ЦСК»" },
+                    { label: "ОГРН", value: "1259500001529" },
+                    { label: "ИНН/КПП", value: "9500030539 / 950001001" },
+                    { label: "Дата регистрации", value: "04.04.2025" },
+                  ],
+                },
+                {
+                  icon: "MapPin",
+                  title: "Адреса",
+                  rows: [
+                    { label: "Юридический адрес", value: "275700, Херсонская обл., г. Скадовск, ул. Александровская, д. 51, оф. 4" },
+                    { label: "Местонахождение", value: "275700, Херсонская обл., г. Скадовск, ул. Александровская, д. 51, оф. 4" },
+                    { label: "Почтовый адрес", value: "152914, Ярославская обл., г. Рыбинск, ул. Качалова, д. 30, кв/оф. 30" },
+                  ],
+                },
+                {
+                  icon: "Users",
+                  title: "Руководство",
+                  rows: [
+                    { label: "Генеральный директор", value: "Рычков Максим Николаевич" },
+                    { label: "Главный бухгалтер", value: "Рычков Максим Николаевич" },
+                    { label: "Телефон", value: "8-990-121-70-46" },
+                    { label: "Основание", value: "Устав компании" },
+                  ],
+                },
+                {
+                  icon: "Landmark",
+                  title: "Банковские реквизиты",
+                  rows: [
+                    { label: "Банк", value: 'ПАО "БАНК ПСБ"' },
+                    { label: "Расчётный счёт", value: "40702 810 4 0000 0343234" },
+                    { label: "Корр. счёт", value: "30101 810 4 0000 0000555" },
+                    { label: "БИК", value: "044525555" },
+                  ],
+                },
+              ].map(card => (
+                <div key={card.title} className="bg-white rounded-xl p-7 shadow-sm border border-foreground/5">
+                  <div className="flex items-center gap-3 mb-5">
+                    <div className="w-9 h-9 bg-brand/10 text-brand rounded-full flex items-center justify-center shrink-0">
+                      <Icon name={card.icon} size={18} />
+                    </div>
+                    <h4 className="font-bold text-foreground">{card.title}</h4>
+                  </div>
+                  <div className="space-y-3">
+                    {card.rows.map(row => (
+                      <div key={row.label} className="flex gap-3 text-sm">
+                        <span className="text-foreground/40 shrink-0 w-36">{row.label}:</span>
+                        <span className="text-foreground font-medium">{row.value}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
           </AnimatedSection>
         </div>
