@@ -8,24 +8,48 @@ const AERIAL_IMG = "https://cdn.poehali.dev/projects/12f928bd-d79e-49a3-9402-01a
 const NAV_ITEMS = [
   { id: "home", label: "Главная" },
   { id: "about", label: "О компании" },
-  { id: "project", label: "Проект" },
+  { id: "project", label: 'ЖК "Перспектива"' },
   { id: "gallery", label: "Галерея" },
   { id: "contacts", label: "Контакты" },
 ];
 
 const GALLERY_ITEMS = [
-  { img: HERO_IMG, title: "Фасад комплекса", year: "2024" },
-  { img: INTERIOR_IMG, title: "Интерьер квартиры", year: "2024" },
-  { img: AERIAL_IMG, title: "Вид сверху", year: "2024" },
-  { img: HERO_IMG, title: "Вечернее освещение", year: "2024" },
-  { img: INTERIOR_IMG, title: "Гостиная", year: "2024" },
-  { img: AERIAL_IMG, title: "Территория", year: "2024" },
+  { img: HERO_IMG, title: "Архитектурный вид", year: "2025" },
+  { img: INTERIOR_IMG, title: "Инфраструктура", year: "2025" },
+  { img: AERIAL_IMG, title: "Благоустройство", year: "2025" },
+  { img: HERO_IMG, title: "Фасад комплекса", year: "2025" },
+  { img: INTERIOR_IMG, title: "Территория", year: "2025" },
+  { img: AERIAL_IMG, title: "Зона отдыха", year: "2025" },
 ];
 
 const FINISH_OPTIONS = [
   { id: "none", label: "Без отделки", price: 0 },
-  { id: "white", label: "Белая отделка", price: 8000 },
-  { id: "full", label: "Полная отделка", price: 18000 },
+  { id: "clean", label: "Чистовая", price: 8000 },
+  { id: "full", label: "Под ключ", price: 18000 },
+];
+
+const APARTMENTS = [
+  {
+    rooms: "1-комнатная",
+    area: "35–45 м²",
+    price: "от 2 100 000 ₽",
+    features: ["Раздельный санузел", "Балкон 4 м²", "Чистовая отделка"],
+    popular: false,
+  },
+  {
+    rooms: "2-комнатная",
+    area: "55–65 м²",
+    price: "от 3 200 000 ₽",
+    features: ["Совмещённый санузел", "Лоджия 6 м²", "Вид во двор"],
+    popular: true,
+  },
+  {
+    rooms: "3-комнатная",
+    area: "75–85 м²",
+    price: "от 4 800 000 ₽",
+    features: ["Два санузла", "Просторная кухня-гостиная", "Вид на парк"],
+    popular: false,
+  },
 ];
 
 function useIntersection(ref: React.RefObject<Element>, threshold = 0.15) {
@@ -57,13 +81,14 @@ function AnimatedSection({ children, className = "" }: { children: React.ReactNo
 export default function Index() {
   const [activeSection, setActiveSection] = useState("home");
   const [menuOpen, setMenuOpen] = useState(false);
-  const [area, setArea] = useState(60);
-  const [floor, setFloor] = useState(5);
-  const [finish, setFinish] = useState("white");
-  const [formData, setFormData] = useState({ name: "", phone: "", message: "" });
+  const [area, setArea] = useState(55);
+  const [floor, setFloor] = useState(3);
+  const [finish, setFinish] = useState("clean");
+  const [formData, setFormData] = useState({ name: "", phone: "", email: "", apartment: "" });
+  const [bookingApt, setBookingApt] = useState<string | null>(null);
 
-  const BASE_PRICE = 185000;
-  const floorCoeff = floor <= 2 ? 0.97 : floor >= 15 ? 1.08 : floor >= 10 ? 1.04 : 1.0;
+  const BASE_PRICE = 58000;
+  const floorCoeff = floor <= 1 ? 0.97 : floor >= 4 ? 1.04 : 1.0;
   const finishAdd = FINISH_OPTIONS.find(f => f.id === finish)?.price ?? 0;
   const totalPrice = Math.round(area * (BASE_PRICE + finishAdd) * floorCoeff);
   const pricePerMeter = Math.round((BASE_PRICE + finishAdd) * floorCoeff);
@@ -89,20 +114,30 @@ export default function Index() {
     setMenuOpen(false);
   };
 
+  const openBooking = (apt: string) => {
+    setBookingApt(apt);
+    setFormData(f => ({ ...f, apartment: apt }));
+  };
+
   return (
     <div className="font-body bg-background text-foreground min-h-screen">
+
       {/* NAVIGATION */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-md border-b border-black/5">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <button onClick={() => scrollTo("home")} className="font-display text-2xl font-light tracking-[0.15em] uppercase">
-            Монолит
+          <button onClick={() => scrollTo("home")} className="flex items-center gap-3">
+            <div className="w-9 h-9 bg-foreground text-background flex items-center justify-center text-sm font-bold tracking-wider">СЗ</div>
+            <div className="hidden sm:block text-left">
+              <div className="font-body text-sm font-semibold leading-tight">ООО «СЗ ЦСК»</div>
+              <div className="text-foreground/40 text-xs">Специализированный застройщик</div>
+            </div>
           </button>
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden md:flex items-center gap-6">
             {NAV_ITEMS.map(item => (
               <button
                 key={item.id}
                 onClick={() => scrollTo(item.id)}
-                className={`text-sm tracking-wider uppercase transition-all duration-200 ${
+                className={`text-sm tracking-wide transition-all duration-200 ${
                   activeSection === item.id
                     ? "text-foreground font-medium"
                     : "text-foreground/50 hover:text-foreground"
@@ -111,11 +146,15 @@ export default function Index() {
                 {item.label}
               </button>
             ))}
+            <a
+              href="tel:+79901217046"
+              className="flex items-center gap-2 bg-foreground text-background px-4 py-2 text-sm font-medium hover:bg-foreground/85 transition-colors"
+            >
+              <Icon name="Phone" size={14} />
+              8-990-121-70-46
+            </a>
           </nav>
-          <button
-            className="md:hidden p-2"
-            onClick={() => setMenuOpen(!menuOpen)}
-          >
+          <button className="md:hidden p-2" onClick={() => setMenuOpen(!menuOpen)}>
             <Icon name={menuOpen ? "X" : "Menu"} size={22} />
           </button>
         </div>
@@ -125,44 +164,55 @@ export default function Index() {
               <button
                 key={item.id}
                 onClick={() => scrollTo(item.id)}
-                className="block w-full text-left px-6 py-3 text-sm tracking-wider uppercase text-foreground/70 hover:text-foreground"
+                className="block w-full text-left px-6 py-3 text-sm text-foreground/70 hover:text-foreground"
               >
                 {item.label}
               </button>
             ))}
+            <a href="tel:+79901217046" className="block px-6 py-3 text-sm font-medium text-foreground">
+              📞 8-990-121-70-46
+            </a>
           </div>
         )}
       </header>
 
       {/* HERO */}
       <section id="home" className="relative h-screen overflow-hidden">
-        <img
-          src={HERO_IMG}
-          alt="Монолит — жилой комплекс"
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/30 to-black/60" />
+        <img src={HERO_IMG} alt='ЖК "Перспектива"' className="absolute inset-0 w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/30 to-black/65" />
         <div className="relative z-10 h-full flex flex-col justify-end pb-20 px-6 max-w-7xl mx-auto">
           <div className="animate-fade-in">
-            <p className="text-white/60 text-sm tracking-[0.3em] uppercase mb-4">Жилой комплекс</p>
-            <h1 className="font-display text-white text-7xl md:text-9xl font-light leading-[0.9] mb-6">
-              Монолит
+            <p className="text-white/60 text-sm tracking-[0.3em] uppercase mb-4">Жилой комплекс · Скадовск</p>
+            <h1 className="font-display text-white text-6xl md:text-8xl font-light leading-[0.9] mb-4">
+              «Перспектива»
             </h1>
-            <p className="text-white/80 text-lg md:text-xl font-light max-w-md mb-10 leading-relaxed">
-              Строим дома, в которых хочется жить. Квартиры в центре города с продуманной архитектурой.
+            <p className="text-white/80 text-lg md:text-xl font-light max-w-lg mb-4 leading-relaxed">
+              Современное комфортабельное жильё от проверенного застройщика с 15-летним опытом
             </p>
+            <div className="flex gap-8 mb-10">
+              {[
+                { num: "12", label: "жилых домов" },
+                { num: "2430", label: "квартир" },
+                { num: "15", label: "гектаров" },
+              ].map(s => (
+                <div key={s.label}>
+                  <div className="font-display text-white text-3xl font-light">{s.num}</div>
+                  <div className="text-white/50 text-xs tracking-wider uppercase">{s.label}</div>
+                </div>
+              ))}
+            </div>
             <div className="flex flex-col sm:flex-row gap-4">
               <button
                 onClick={() => scrollTo("project")}
                 className="bg-white text-foreground px-8 py-3.5 text-sm tracking-widest uppercase font-medium hover:bg-white/90 transition-colors"
               >
-                Смотреть проект
+                Забронировать квартиру
               </button>
               <button
-                onClick={() => scrollTo("contacts")}
+                onClick={() => scrollTo("project")}
                 className="border border-white text-white px-8 py-3.5 text-sm tracking-widest uppercase font-medium hover:bg-white/10 transition-colors"
               >
-                Оставить заявку
+                Подробнее о проекте
               </button>
             </div>
           </div>
@@ -173,18 +223,21 @@ export default function Index() {
         </div>
       </section>
 
-      {/* STATS */}
+      {/* ADVANTAGES */}
       <section className="bg-foreground text-background py-16">
         <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8">
           {[
-            { num: "15+", label: "Лет на рынке" },
-            { num: "47", label: "Завершённых объектов" },
-            { num: "3200", label: "Семей в наших домах" },
-            { num: "2026", label: "Год сдачи" },
-          ].map((stat) => (
-            <div key={stat.label} className="text-center">
-              <div className="font-display text-5xl md:text-6xl font-light mb-2">{stat.num}</div>
-              <div className="text-background/50 text-sm tracking-wider uppercase">{stat.label}</div>
+            { icon: "ShieldCheck", title: "Надёжность", desc: "Член СРО, все работы по ГОСТам и СНиПам" },
+            { icon: "Home", title: "Собственный контроль", desc: "Полный цикл строительства под нашим контролем" },
+            { icon: "Banknote", title: "Выгодные условия", desc: "Рассрочка, ипотека от партнёрских банков" },
+            { icon: "Trees", title: "Экология", desc: "Зелёная зона, парк, бассейн на территории" },
+          ].map(card => (
+            <div key={card.title} className="text-center">
+              <div className="flex justify-center mb-3 text-background/50">
+                <Icon name={card.icon} size={32} />
+              </div>
+              <div className="font-display text-xl font-light mb-1">{card.title}</div>
+              <div className="text-background/40 text-sm leading-relaxed">{card.desc}</div>
             </div>
           ))}
         </div>
@@ -196,21 +249,31 @@ export default function Index() {
           <AnimatedSection>
             <p className="text-foreground/40 text-sm tracking-[0.3em] uppercase mb-6">О компании</p>
             <h2 className="font-display text-5xl md:text-6xl font-light leading-tight mb-8">
-              Мы строим не квадратные метры — мы создаём среду для жизни
+              ООО «СЗ ЦСК» — строим с опытом и ответственностью
             </h2>
             <p className="text-foreground/60 leading-relaxed mb-6">
-              Компания «Монолит» основана в 2009 году. За 15 лет мы возвели 47 жилых комплексов и превратили
-              тысячи квартир в настоящие дома. Наш принцип — архитектура, которая работает для людей.
+              ООО «Специализированный Застройщик ЦЕНТРСТРОЙКОМПЛЕКС» — компания с 15-летним опытом работы
+              на рынке строительства жилой недвижимости. Специализируемся на строительстве современных
+              жилых комплексов комфорт-класса в Херсонской области.
             </p>
-            <p className="text-foreground/60 leading-relaxed mb-10">
-              Мы проектируем каждый дом с заботой о деталях: продуманные планировки, качественные материалы,
-              благоустроенные дворы и развитая инфраструктура в шаговой доступности.
-            </p>
-            <div className="flex flex-col gap-4">
+            <div className="space-y-3 mb-10">
               {[
-                "Собственное производство строительных материалов",
-                "Гарантия на конструктив — 30 лет",
-                "Эскроу-счета для защиты покупателей",
+                { label: "ОГРН", value: "1259500001529" },
+                { label: "ИНН/КПП", value: "9500030539 / 950001001" },
+                { label: "В реестре с", value: "04.04.2025" },
+                { label: "Генеральный директор", value: "Рычков Максим Николаевич" },
+              ].map(d => (
+                <div key={d.label} className="flex gap-3 text-sm">
+                  <span className="text-foreground/40 w-44 shrink-0">{d.label}:</span>
+                  <span className="text-foreground font-medium">{d.value}</span>
+                </div>
+              ))}
+            </div>
+            <div className="flex flex-col gap-3">
+              {[
+                "Член СРО — все работы по ГОСТам и СНиПам",
+                "Полный цикл строительства под собственным контролем",
+                "Рассрочка и ипотека от партнёрских банков",
               ].map(item => (
                 <div key={item} className="flex items-start gap-3">
                   <div className="w-1 h-1 rounded-full bg-foreground mt-2 shrink-0" />
@@ -221,14 +284,10 @@ export default function Index() {
           </AnimatedSection>
           <AnimatedSection>
             <div className="relative">
-              <img
-                src={INTERIOR_IMG}
-                alt="Интерьер"
-                className="w-full h-[500px] object-cover"
-              />
+              <img src={INTERIOR_IMG} alt="О компании" className="w-full h-[500px] object-cover" />
               <div className="absolute -bottom-6 -left-6 bg-background p-6 shadow-lg">
-                <div className="font-display text-4xl font-light">№1</div>
-                <div className="text-foreground/50 text-xs tracking-wider uppercase mt-1">В регионе по качеству</div>
+                <div className="font-display text-4xl font-light">15+</div>
+                <div className="text-foreground/50 text-xs tracking-wider uppercase mt-1">Лет на рынке</div>
               </div>
             </div>
           </AnimatedSection>
@@ -242,30 +301,83 @@ export default function Index() {
             <p className="text-foreground/40 text-sm tracking-[0.3em] uppercase mb-4">Наш проект</p>
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-4">
               <h2 className="font-display text-5xl md:text-6xl font-light leading-tight max-w-lg">
-                ЖК «Монолит» — новый стандарт городской жизни
+                ЖК «Перспектива» — новый стандарт комфорта
               </h2>
               <p className="text-foreground/50 text-sm max-w-xs leading-relaxed">
-                Квартиры от 35 до 140 м² в 22-этажном здании в центре города. Сдача — IV квартал 2026 года.
+                Расположен в северо-восточной части Скадовска на участке 15 гектаров.
               </p>
             </div>
           </AnimatedSection>
 
           <AnimatedSection>
-            <div className="grid md:grid-cols-3 gap-6 mb-16">
-              {[
-                { icon: "Building2", title: "22 этажа", desc: "Монолитное строительство, высота потолков 3 м" },
-                { icon: "Car", title: "Паркинг", desc: "Подземный паркинг на 200 машино-мест" },
-                { icon: "Trees", title: "Двор-парк", desc: "Закрытая благоустроенная территория 2 га" },
-                { icon: "ShoppingBag", title: "Инфраструктура", desc: "Детский сад, школа и магазины в 5 минутах" },
-                { icon: "Wifi", title: "Умный дом", desc: "Видеонаблюдение, домофон, учёт ресурсов" },
-                { icon: "BadgeCheck", title: "Гарантия", desc: "30 лет на несущие конструкции здания" },
-              ].map(card => (
-                <div key={card.title} className="bg-background p-8 group hover:shadow-md transition-shadow">
-                  <div className="mb-4 text-foreground/40 group-hover:text-foreground transition-colors">
-                    <Icon name={card.icon} size={28} />
+            <div className="grid md:grid-cols-2 gap-10 mb-16 items-start">
+              <div>
+                <p className="text-foreground/60 leading-relaxed mb-6">
+                  В составе комплекса 12 пятиэтажных домов с современной отделкой фасадов облицовочным кирпичом.
+                  2430 квартир различных планировок, подземные и наземные парковки, открытый бассейн,
+                  спортивные площадки и детские зоны.
+                </p>
+                <div className="flex flex-col gap-3">
+                  {[
+                    "2430 квартир различных планировок",
+                    "Подземные и наземные парковки",
+                    "Открытый бассейн и спортивные площадки",
+                    "Детские и игровые зоны",
+                    "Зона рекреации с фонтаном и ротондами",
+                  ].map(item => (
+                    <div key={item} className="flex items-start gap-3">
+                      <Icon name="Check" size={16} className="text-foreground/50 mt-0.5 shrink-0" />
+                      <span className="text-foreground/70 text-sm">{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                {[
+                  { num: "12", label: "жилых домов" },
+                  { num: "2430", label: "квартир" },
+                  { num: "15", label: "гектаров" },
+                  { num: "5", label: "этажей" },
+                  { num: "3", label: "типа планировок" },
+                  { num: "2025", label: "год начала продаж" },
+                ].map(s => (
+                  <div key={s.label} className="bg-background p-5 text-center">
+                    <div className="font-display text-3xl font-light mb-1">{s.num}</div>
+                    <div className="text-foreground/40 text-xs tracking-wide uppercase leading-tight">{s.label}</div>
                   </div>
-                  <h3 className="font-display text-2xl font-light mb-2">{card.title}</h3>
-                  <p className="text-foreground/50 text-sm leading-relaxed">{card.desc}</p>
+                ))}
+              </div>
+            </div>
+          </AnimatedSection>
+
+          {/* APARTMENTS */}
+          <AnimatedSection>
+            <h3 className="font-display text-4xl font-light mb-8">Выберите свою квартиру</h3>
+            <div className="grid md:grid-cols-3 gap-6 mb-16">
+              {APARTMENTS.map(apt => (
+                <div key={apt.rooms} className={`bg-background p-8 relative ${apt.popular ? "ring-1 ring-foreground" : ""}`}>
+                  {apt.popular && (
+                    <div className="absolute -top-3 left-6 bg-foreground text-background text-xs px-3 py-1 tracking-widest uppercase">
+                      Популярно
+                    </div>
+                  )}
+                  <h3 className="font-display text-2xl font-light mb-1">{apt.rooms}</h3>
+                  <p className="text-foreground/40 text-sm mb-4">{apt.area}</p>
+                  <div className="space-y-2 mb-6">
+                    {apt.features.map(f => (
+                      <div key={f} className="flex items-start gap-2 text-sm text-foreground/60">
+                        <Icon name="Check" size={14} className="mt-0.5 shrink-0" />
+                        {f}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="font-display text-2xl font-light mb-6">{apt.price}</div>
+                  <button
+                    onClick={() => { openBooking(apt.rooms); scrollTo("contacts"); }}
+                    className="w-full border border-foreground text-foreground py-3 text-sm tracking-widest uppercase font-medium hover:bg-foreground hover:text-background transition-colors"
+                  >
+                    Выбрать
+                  </button>
                 </div>
               ))}
             </div>
@@ -276,7 +388,6 @@ export default function Index() {
             <div className="bg-foreground text-background p-10 md:p-14">
               <p className="text-background/40 text-sm tracking-[0.3em] uppercase mb-4">Калькулятор</p>
               <h3 className="font-display text-4xl md:text-5xl font-light mb-10">Рассчитайте стоимость квартиры</h3>
-
               <div className="grid md:grid-cols-2 gap-10">
                 <div className="space-y-8">
                   <div>
@@ -285,48 +396,36 @@ export default function Index() {
                       <span className="font-display text-2xl font-light">{area} м²</span>
                     </div>
                     <input
-                      type="range"
-                      min={30}
-                      max={140}
-                      value={area}
+                      type="range" min={35} max={85} value={area}
                       onChange={e => setArea(Number(e.target.value))}
                       className="w-full cursor-pointer"
                       style={{
-                        height: "1px",
-                        appearance: "none",
-                        WebkitAppearance: "none",
-                        background: `linear-gradient(to right, rgba(255,255,255,0.8) ${((area - 30) / 110) * 100}%, rgba(255,255,255,0.15) 0%)`
+                        height: "1px", appearance: "none", WebkitAppearance: "none",
+                        background: `linear-gradient(to right, rgba(255,255,255,0.8) ${((area - 35) / 50) * 100}%, rgba(255,255,255,0.15) 0%)`
                       }}
                     />
                     <div className="flex justify-between text-background/30 text-xs mt-2">
-                      <span>30 м²</span><span>140 м²</span>
+                      <span>35 м²</span><span>85 м²</span>
                     </div>
                   </div>
-
                   <div>
                     <div className="flex justify-between mb-3">
                       <label className="text-background/60 text-sm tracking-wider uppercase">Этаж</label>
                       <span className="font-display text-2xl font-light">{floor}-й этаж</span>
                     </div>
                     <input
-                      type="range"
-                      min={1}
-                      max={22}
-                      value={floor}
+                      type="range" min={1} max={5} value={floor}
                       onChange={e => setFloor(Number(e.target.value))}
                       className="w-full cursor-pointer"
                       style={{
-                        height: "1px",
-                        appearance: "none",
-                        WebkitAppearance: "none",
-                        background: `linear-gradient(to right, rgba(255,255,255,0.8) ${((floor - 1) / 21) * 100}%, rgba(255,255,255,0.15) 0%)`
+                        height: "1px", appearance: "none", WebkitAppearance: "none",
+                        background: `linear-gradient(to right, rgba(255,255,255,0.8) ${((floor - 1) / 4) * 100}%, rgba(255,255,255,0.15) 0%)`
                       }}
                     />
                     <div className="flex justify-between text-background/30 text-xs mt-2">
-                      <span>1 этаж</span><span>22 этаж</span>
+                      <span>1 этаж</span><span>5 этаж</span>
                     </div>
                   </div>
-
                   <div>
                     <label className="text-background/60 text-sm tracking-wider uppercase block mb-3">Отделка</label>
                     <div className="grid grid-cols-3 gap-2">
@@ -334,7 +433,7 @@ export default function Index() {
                         <button
                           key={opt.id}
                           onClick={() => setFinish(opt.id)}
-                          className={`py-3 px-3 text-xs tracking-wider uppercase transition-all border ${
+                          className={`py-3 px-2 text-xs tracking-wider uppercase transition-all border ${
                             finish === opt.id
                               ? "bg-white text-foreground border-white font-medium"
                               : "border-background/20 text-background/50 hover:border-background/50 hover:text-background/80"
@@ -346,7 +445,6 @@ export default function Index() {
                     </div>
                   </div>
                 </div>
-
                 <div className="flex flex-col justify-center border border-background/10 p-8">
                   <p className="text-background/40 text-sm tracking-wider uppercase mb-2">Стоимость квартиры</p>
                   <div className="font-display text-5xl md:text-6xl font-light mb-2 leading-none">
@@ -374,7 +472,7 @@ export default function Index() {
                     )}
                   </div>
                   <button
-                    onClick={() => document.getElementById("contacts")?.scrollIntoView({ behavior: "smooth" })}
+                    onClick={() => scrollTo("contacts")}
                     className="bg-white text-foreground py-4 text-sm tracking-widest uppercase font-medium hover:bg-white/90 transition-colors"
                   >
                     Оставить заявку
@@ -392,7 +490,7 @@ export default function Index() {
           <AnimatedSection>
             <p className="text-foreground/40 text-sm tracking-[0.3em] uppercase mb-4">Галерея</p>
             <h2 className="font-display text-5xl md:text-6xl font-light leading-tight mb-16 max-w-lg">
-              Фотографии объекта
+              ЖК «Перспектива» в деталях
             </h2>
           </AnimatedSection>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
@@ -422,20 +520,20 @@ export default function Index() {
           <AnimatedSection>
             <p className="text-foreground/40 text-sm tracking-[0.3em] uppercase mb-4">Контакты</p>
             <h2 className="font-display text-5xl md:text-6xl font-light leading-tight mb-8">
-              Оставьте заявку — мы перезвоним
+              Забронируйте квартиру — мы перезвоним
             </h2>
             <p className="text-foreground/60 leading-relaxed mb-12">
-              Наши менеджеры помогут подобрать квартиру, рассчитают ипотеку и запишут на экскурсию по объекту.
+              Наши менеджеры помогут подобрать квартиру, рассчитают рассрочку или ипотеку
+              и запишут на экскурсию по объекту.
             </p>
             <div className="space-y-6">
               {[
-                { icon: "Phone", label: "Телефон", value: "+7 (800) 000-00-00" },
-                { icon: "Mail", label: "Email", value: "info@monolit-dev.ru" },
-                { icon: "MapPin", label: "Офис продаж", value: "ул. Центральная, 1, офис 101" },
-                { icon: "Clock", label: "Режим работы", value: "Пн–Вс: 9:00 — 20:00" },
+                { icon: "Phone", label: "Телефон", value: "8-990-121-70-46" },
+                { icon: "Mail", label: "Email", value: "ooo.sz-csk@yandex.ru" },
+                { icon: "MapPin", label: "Юридический адрес", value: "275700, Херсонская обл., г. Скадовск, ул. Александровская, д. 51, оф. 4" },
               ].map(contact => (
                 <div key={contact.label} className="flex items-start gap-4">
-                  <div className="text-foreground/30 mt-0.5">
+                  <div className="text-foreground/30 mt-0.5 shrink-0">
                     <Icon name={contact.icon} size={18} />
                   </div>
                   <div>
@@ -449,34 +547,44 @@ export default function Index() {
 
           <AnimatedSection>
             <form className="space-y-5" onSubmit={e => e.preventDefault()}>
+              {bookingApt && (
+                <div>
+                  <label className="block text-foreground/50 text-xs tracking-wider uppercase mb-2">Выбранный вариант</label>
+                  <div className="w-full bg-foreground/5 border border-foreground/10 px-5 py-4 text-sm text-foreground">
+                    {bookingApt}
+                    <button onClick={() => setBookingApt(null)} className="ml-2 text-foreground/30 hover:text-foreground">×</button>
+                  </div>
+                </div>
+              )}
               <div>
-                <label className="block text-foreground/50 text-xs tracking-wider uppercase mb-2">Имя</label>
+                <label className="block text-foreground/50 text-xs tracking-wider uppercase mb-2">ФИО</label>
                 <input
                   type="text"
                   value={formData.name}
                   onChange={e => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="Иван Иванов"
+                  placeholder="Иванов Иван Иванович"
                   className="w-full bg-background border border-foreground/10 px-5 py-4 text-foreground placeholder:text-foreground/25 focus:outline-none focus:border-foreground/40 transition-colors"
                 />
               </div>
               <div>
-                <label className="block text-foreground/50 text-xs tracking-wider uppercase mb-2">Телефон</label>
+                <label className="block text-foreground/50 text-xs tracking-wider uppercase mb-2">Телефон *</label>
                 <input
                   type="tel"
                   value={formData.phone}
                   onChange={e => setFormData({ ...formData, phone: e.target.value })}
                   placeholder="+7 (___) ___-__-__"
+                  required
                   className="w-full bg-background border border-foreground/10 px-5 py-4 text-foreground placeholder:text-foreground/25 focus:outline-none focus:border-foreground/40 transition-colors"
                 />
               </div>
               <div>
-                <label className="block text-foreground/50 text-xs tracking-wider uppercase mb-2">Сообщение</label>
-                <textarea
-                  value={formData.message}
-                  onChange={e => setFormData({ ...formData, message: e.target.value })}
-                  placeholder="Интересует квартира 2 комнаты, 3-5 этаж..."
-                  rows={4}
-                  className="w-full bg-background border border-foreground/10 px-5 py-4 text-foreground placeholder:text-foreground/25 focus:outline-none focus:border-foreground/40 transition-colors resize-none"
+                <label className="block text-foreground/50 text-xs tracking-wider uppercase mb-2">Email</label>
+                <input
+                  type="email"
+                  value={formData.email}
+                  onChange={e => setFormData({ ...formData, email: e.target.value })}
+                  placeholder="example@mail.ru"
+                  className="w-full bg-background border border-foreground/10 px-5 py-4 text-foreground placeholder:text-foreground/25 focus:outline-none focus:border-foreground/40 transition-colors"
                 />
               </div>
               <button
@@ -494,17 +602,38 @@ export default function Index() {
       </section>
 
       {/* FOOTER */}
-      <footer className="bg-foreground text-background py-10 px-6">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-          <div>
-            <div className="font-display text-2xl font-light tracking-[0.15em] uppercase mb-1">Монолит</div>
-            <p className="text-background/30 text-sm">© 2024 ООО «Монолит». Все права защищены.</p>
+      <footer className="bg-foreground text-background py-12 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-10 mb-10">
+            <div>
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-9 h-9 bg-background/10 text-background flex items-center justify-center text-sm font-bold">СЗ</div>
+                <div className="font-body text-sm font-semibold">ООО «СЗ ЦСК»</div>
+              </div>
+              <p className="text-background/40 text-sm leading-relaxed">
+                Специализированный застройщик.<br />
+                Строительство жилых комплексов в Херсонской области.
+              </p>
+            </div>
+            <div>
+              <h4 className="text-background/60 text-xs tracking-widest uppercase mb-4">Контакты</h4>
+              <div className="space-y-2 text-sm text-background/50">
+                <div className="flex gap-2"><Icon name="MapPin" size={14} className="mt-0.5 shrink-0" /><span>275700, Херсонская обл., г. Скадовск, ул. Александровская, д. 51, оф. 4</span></div>
+                <div className="flex gap-2"><Icon name="Mail" size={14} className="mt-0.5 shrink-0" /><span>ooo.sz-csk@yandex.ru</span></div>
+                <div className="flex gap-2"><Icon name="Phone" size={14} className="mt-0.5 shrink-0" /><span>8-990-121-70-46</span></div>
+              </div>
+            </div>
+            <div>
+              <h4 className="text-background/60 text-xs tracking-widest uppercase mb-4">Проекты</h4>
+              <div className="space-y-2 text-sm text-background/50">
+                <button onClick={() => scrollTo("project")} className="block hover:text-background transition-colors">ЖК «Перспектива»</button>
+                <span className="block text-background/30">Планируемые проекты</span>
+              </div>
+            </div>
           </div>
-          <div className="flex flex-col md:flex-row gap-4 md:gap-8 text-background/40 text-sm">
-            <button onClick={() => scrollTo("about")} className="hover:text-background transition-colors text-left">О компании</button>
-            <button onClick={() => scrollTo("project")} className="hover:text-background transition-colors text-left">Проект</button>
-            <button onClick={() => scrollTo("gallery")} className="hover:text-background transition-colors text-left">Галерея</button>
-            <button onClick={() => scrollTo("contacts")} className="hover:text-background transition-colors text-left">Контакты</button>
+          <div className="border-t border-background/10 pt-6 flex flex-col md:flex-row justify-between gap-2 text-background/30 text-sm">
+            <span>© 2025 ООО «СЗ ЦСК». Все права защищены.</span>
+            <span>Генеральный директор: Рычков Максим Николаевич</span>
           </div>
         </div>
       </footer>
